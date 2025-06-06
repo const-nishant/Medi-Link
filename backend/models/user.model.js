@@ -1,22 +1,25 @@
 import mongoose from "mongoose";
 
-const profileSchema = new mongoose.Schema({
-  age: {
-    type: Number,
-    min: [0, "Age cannot be negative"],
+const profileSchema = new mongoose.Schema(
+  {
+    age: {
+      type: Number,
+      min: [0, "Age cannot be negative"],
+    },
+    gender: {
+      type: String,
+      enum: ["male", "female", "other"],
+    },
+    specilization: {
+      type: String,
+    },
+    address: {
+      type: String,
+      trim: true,
+    },
   },
-  gender: {
-    type: String,
-    enum: ["male", "female", "other"],
-  },
-  specilization: {
-    type: String,
-  },
-  address: {
-    type: String,
-    trim: true,
-  },
-});
+  { _id: false }
+);
 
 const userSchema = new mongoose.Schema(
   {
