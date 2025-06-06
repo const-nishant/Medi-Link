@@ -17,8 +17,15 @@ const authorize = async (req, res, next) => {
         message: "Unauthorized",
       });
     }
+
+    // Verify token
     const decoded = jwt.verify(token, JWT_SECRET);
 
+    // Attach user info from token to request
+    req.userEmail = decoded.email;
+    req.userRole = decoded.role;
+
+    // Optionally, fetch user from DB if needed
     const user = await User.findById(decoded.userId);
     if (!user) {
       return res.status(401).json({
@@ -27,6 +34,7 @@ const authorize = async (req, res, next) => {
       });
     }
     req.user = user;
+
     next();
   } catch (error) {
     res.status(401).json({

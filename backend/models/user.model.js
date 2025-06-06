@@ -1,4 +1,5 @@
 import mongoose from "mongoose";
+import Opt from "./opt.model.js";
 
 const profileSchema = new mongoose.Schema(
   {
@@ -63,6 +64,17 @@ const userSchema = new mongoose.Schema(
 );
 
 userSchema.index({ email: 1, role: 1 });
+userSchema.post("", function (doc) {
+  return Opt.create({
+    email: doc.email,
+    otp: null,
+  });
+});
+userSchema.post("findOneAndDelete", async function (doc) {
+  if (doc) {
+    await Opt.deleteOne({ email: doc.email });
+  }
+});
 
 const User = mongoose.model("User", userSchema);
 export default User;

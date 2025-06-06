@@ -1,5 +1,12 @@
 import { Router } from "express";
-import { signIn, signOut, signUp } from "../controllers/auth.controller.js";
+import {
+  emailVerificationRequest,
+  emailVerificationSubmit,
+  signIn,
+  signOut,
+  signUp,
+} from "../controllers/auth.controller.js";
+import authorize from "../middlewares/auth.middleware.js";
 const authRouter = Router();
 
 authRouter.post("/sign-up", signUp);
@@ -12,12 +19,16 @@ authRouter.post("/forgot-password", (req, res) => {
   res.send("Password reset link sent to your email");
 });
 
-authRouter.post("/email-verification/request", (req, res) => {
-  res.send("Email verification link sent to your email");
-});
+authRouter.post(
+  "/email-verification/request",
+  authorize,
+  emailVerificationRequest
+);
 
-authRouter.post("/email-verification/submit", (req, res) => {
-  res.send("Email verified successfully");
-});
+authRouter.post(
+  "/email-verification/submit",
+  authorize,
+  emailVerificationSubmit
+);
 
 export default authRouter;
