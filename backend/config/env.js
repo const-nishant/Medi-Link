@@ -8,6 +8,8 @@ export const {
   DB_URI,
   JWT_SECRET,
   JWT_EXPIRES_IN,
+  MAILER_USER,
+  MAILER_PASS,
   // ARCJET_KEY,
   // ARCJET_ENV,
 } = process.env;
