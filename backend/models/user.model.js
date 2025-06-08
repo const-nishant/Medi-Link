@@ -5,6 +5,7 @@ const profileSchema = new mongoose.Schema(
   {
     age: {
       type: Number,
+      default: 0,
       min: [0, "Age cannot be negative"],
     },
     gender: {
@@ -13,10 +14,12 @@ const profileSchema = new mongoose.Schema(
     },
     specilization: {
       type: String,
+      default: "",
     },
     address: {
       type: String,
       trim: true,
+      default: "",
     },
   },
   { _id: false }
@@ -55,7 +58,7 @@ const userSchema = new mongoose.Schema(
     },
     profile: {
       type: profileSchema,
-      default: {},
+      default: () => ({}),
     },
   },
   {

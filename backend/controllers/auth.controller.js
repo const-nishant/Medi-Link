@@ -1,15 +1,11 @@
 import jwt from "jsonwebtoken";
-// eslint-disable-next-line no-unused-vars
 import { JWT_SECRET, JWT_EXPIRES_IN } from "../config/env.js";
 import User from "../models/user.model.js";
 import bcrypt from "bcrypt";
-import mongoose from "mongoose";
 import Opt from "../models/opt.model.js";
 import { sendMail } from "../sendmail.js";
 
 export const signUp = async (req, res, next) => {
-  const session = await mongoose.startSession();
-  session.startTransaction();
   try {
     const { name, email, password, role } = req.body;
 
@@ -26,46 +22,36 @@ export const signUp = async (req, res, next) => {
     const hashedPassword = await bcrypt.hash(password, salt);
 
     //create new user
-    const newUser = await User.create(
-      [
-        {
-          name,
-          email,
-          password: hashedPassword,
-          role,
-          isEmailVerified: false,
-        },
-      ],
-      { session }
-    );
+    const newUser = await User.create({
+      name,
+      email,
+      password: hashedPassword,
+      role,
+      isEmailVerified: false,
+    });
 
     //create JWT token
     const token = jwt.sign(
       {
-        userId: newUser[0]._id,
-        role: newUser[0].role,
-        email: newUser[0].email,
+        userId: newUser._id,
+        role: newUser.role,
+        email: newUser.email,
       },
-      process.env.JWT_SECRET,
+      JWT_SECRET,
       {
-        expiresIn: process.env.JWT_EXPIRES_IN,
+        expiresIn: JWT_EXPIRES_IN,
       }
     );
 
-    //commit transaction
-    await session.commitTransaction();
-    session.endSession();
     res.status(201).json({
       success: true,
       message: "User created successfully",
       data: {
         token: token,
-        user: newUser[0],
+        user: newUser,
       },
     });
   } catch (error) {
-    await session.abortTransaction();
-    session.endSession();
     next(error);
   }
 };
