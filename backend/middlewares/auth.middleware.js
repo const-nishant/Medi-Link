@@ -22,6 +22,7 @@ const authorize = async (req, res, next) => {
     const decoded = jwt.verify(token, JWT_SECRET);
 
     // Attach user info from token to request
+    req.userId = decoded.userId;
     req.userEmail = decoded.email;
     req.userRole = decoded.role;
 
