@@ -1,6 +1,6 @@
 import jwt from "jsonwebtoken";
 import { JWT_SECRET, JWT_EXPIRES_IN } from "../config/env.js";
-import User, { Doctor } from "../models/user.model.js";
+import User, { Doctor, Patient } from "../models/user.model.js";
 import bcrypt from "bcrypt";
 import Opt from "../models/opt.model.js";
 import { sendMail } from "../sendmail.js";
@@ -24,7 +24,7 @@ export const signUp = async (req, res, next) => {
     //create new user
     let newUser;
     if (role === "patient") {
-      newUser = await Doctor.create({
+      newUser = await Patient.create({
         name,
         email,
         password: hashedPassword,
@@ -33,7 +33,7 @@ export const signUp = async (req, res, next) => {
         profile,
       });
     } else if (role === "doctor") {
-      newUser = await User.create({
+      newUser = await Doctor.create({
         name,
         email,
         password: hashedPassword,
