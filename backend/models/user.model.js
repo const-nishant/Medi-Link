@@ -1,7 +1,13 @@
 import mongoose from "mongoose";
 import Opt from "./opt.model.js";
 
-const profileSchema = new mongoose.Schema(
+const baseOptions = {
+  discriminatorKey: "role",
+  collection: "users",
+  timestamps: true,
+};
+
+const doctorProfileSchema = new mongoose.Schema(
   {
     age: {
       type: Number,
@@ -15,6 +21,28 @@ const profileSchema = new mongoose.Schema(
     specilization: {
       type: String,
       default: "",
+    },
+    address: {
+      type: String,
+      trim: true,
+      default: "",
+    },
+  },
+  { _id: false }
+);
+
+
+
+const patientProfileSchema = new mongoose.Schema(
+  {
+    age: {
+      type: Number,
+      default: 0,
+      min: [0, "Age cannot be negative"],
+    },
+    gender: {
+      type: String,
+      enum: ["male", "female", "other"],
     },
     address: {
       type: String,
@@ -56,14 +84,11 @@ const userSchema = new mongoose.Schema(
       type: Boolean,
       default: false,
     },
-    profile: {
-      type: profileSchema,
-      default: () => ({}),
-    },
   },
   {
     timestamps: true,
-  }
+  },
+  baseOptions
 );
 
 userSchema.index({ email: 1, role: 1 });
@@ -81,3 +106,22 @@ userSchema.post("findOneAndDelete", async function (doc) {
 
 const User = mongoose.model("User", userSchema);
 export default User;
+
+export const Patient = User.discriminator(
+  "patient",
+  new mongoose.Schema({
+    profile:{
+      type:patientProfileSchema,
+      default:()=>({}),
+    }
+  })
+);
+export const Doctor = User.discriminator(
+  "doctor",
+  new mongoose.Schema({
+    profile: {
+      type: doctorProfileSchema,
+      default: () => ({}),
+    },
+  })
+);

@@ -1,13 +1,13 @@
 import jwt from "jsonwebtoken";
 import { JWT_SECRET, JWT_EXPIRES_IN } from "../config/env.js";
-import User from "../models/user.model.js";
+import User, { Doctor } from "../models/user.model.js";
 import bcrypt from "bcrypt";
 import Opt from "../models/opt.model.js";
 import { sendMail } from "../sendmail.js";
 
 export const signUp = async (req, res, next) => {
   try {
-    const { name, email, password, role } = req.body;
+    const { name, email, password, role, profile } = req.body;
 
     //check if user already exists
     const existingUser = await User.findOne({ email });
@@ -22,13 +22,26 @@ export const signUp = async (req, res, next) => {
     const hashedPassword = await bcrypt.hash(password, salt);
 
     //create new user
-    const newUser = await User.create({
-      name,
-      email,
-      password: hashedPassword,
-      role,
-      isEmailVerified: false,
-    });
+    let newUser;
+    if (role === "patient") {
+      newUser = await Doctor.create({
+        name,
+        email,
+        password: hashedPassword,
+        isEmailVerified: false,
+        role,
+        profile,
+      });
+    } else if (role === "doctor") {
+      newUser = await User.create({
+        name,
+        email,
+        password: hashedPassword,
+        isEmailVerified: false,
+        role,
+        profile,
+      });
+    }
 
     //create JWT token
     const token = jwt.sign(
