@@ -1,4 +1,4 @@
-import User from "../models/user.model";
+import User from "../models/user.model.js";
 
 export const getUser = async (req, res, next) => {
   const userId = req.params.id;
@@ -17,9 +17,9 @@ export const getUser = async (req, res, next) => {
   } catch (error) {
     next(error);
   }
-}
+};
 
-export const  updateUser = async (req, res, next) => {
+export const updateUser = async (req, res, next) => {
   const userId = req.params.id;
   try {
     const updatedUser = await User.findByIdAndUpdate(
@@ -43,7 +43,7 @@ export const  updateUser = async (req, res, next) => {
   } catch (error) {
     next(error);
   }
-}
+};
 
 export const deleteUser = async (req, res, next) => {
   const userId = req.params.id;
@@ -62,45 +62,44 @@ export const deleteUser = async (req, res, next) => {
   } catch (error) {
     next(error);
   }
-}
+};
 
-export const getDoctor = async (req, res,next) => {
- try {
-   const doctorId = req.params.id;
-  const doctor = await User.findOne({ _id: doctorId, role: "doctor" });
-  if (!doctor) {
-    return res.status(404).json({
-      success: false,
-      message: "Doctor not found",
-    });
-  }
-  res.status(200).json({
-    success: true,
-    data: doctor,
-  });
- } catch (error) {
-  next(error);
- }
-}
-
-
-export const getDoctors= async (req, res, next) => {
-    try {
-      const doctors = await User.find({ role: "doctor" });
-
-      if (!doctors) {
-        return res.status(404).json({
-          success: false,
-          message: "Doctors not found",
-        });
-      }
-
-      return res.status(200).json({
-        success: true,
-        message: "Doctors fetched successfully",
-        data: doctors,
+export const getDoctor = async (req, res, next) => {
+  try {
+    const doctorId = req.params.id;
+    const doctor = await User.findOne({ _id: doctorId, role: "doctor" });
+    if (!doctor) {
+      return res.status(404).json({
+        success: false,
+        message: "Doctor not found",
       });
-    } catch (error) {
-      next(error);
     }
+    res.status(200).json({
+      success: true,
+      data: doctor,
+    });
+  } catch (error) {
+    next(error);
   }
+};
+
+export const getDoctors = async (req, res, next) => {
+  try {
+    const doctors = await User.find({ role: "doctor" });
+
+    if (!doctors) {
+      return res.status(404).json({
+        success: false,
+        message: "Doctors not found",
+      });
+    }
+
+    return res.status(200).json({
+      success: true,
+      message: "Doctors fetched successfully",
+      data: doctors,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
