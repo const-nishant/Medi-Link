@@ -4,6 +4,8 @@ import { PORT } from "./config/env.js";
 import connectToDatabase from "./database/mongodb.js";
 import authRouter from "./routes/auth.route.js";
 import errorMiddleware from "./middlewares/error.middleware.js";
+import appointmentRouter from "./routes/appoinment.route.js";
+import userRouter from "./routes/user.route.js";
 const app = express();
 
 app.use(express.json());
@@ -12,6 +14,8 @@ app.use(cookieParser());
 
 // Import routes
 app.use("/api/v1/auth", authRouter);
+app.use("/api/v1/appointment", appointmentRouter);
+app.use("/api/v1/user", userRouter);
 
 // Middleware
 app.use(errorMiddleware);
