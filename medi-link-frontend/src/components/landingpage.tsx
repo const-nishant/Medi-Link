@@ -25,18 +25,20 @@ export default function HomePage() {
               records — all in one platform, built for doctors and patients.
             </p>
             <div className="flex flex-col sm:flex-row gap-4">
-              <Link href="/login">
+              <Link href="/signup">
                 <Button size="lg" className="w-full sm:w-auto">
                   Get Started
                 </Button>
               </Link>
-              <Button
-                className="w-full sm:w-auto border-gray-300 dark:border-zinc-700"
-                variant="outline"
-                size="lg"
-              >
-                Explore Features
-              </Button>
+              <Link href="#features">
+                <Button
+                  className="w-full sm:w-auto border-gray-300 dark:border-zinc-700"
+                  variant="outline"
+                  size="lg"
+                >
+                  Explore Features
+                </Button>
+              </Link>
             </div>
           </div>
           <div className="relative w-full h-[400px] rounded-xl overflow-hidden">
@@ -52,7 +54,10 @@ export default function HomePage() {
       </section>
 
       {/* Features */}
-      <section className="bg-gray-100 dark:bg-zinc-900 py-20 px-4 md:px-20 mt-12">
+      <section
+        className="bg-gray-100 dark:bg-zinc-900 py-20 px-4 md:px-20 mt-12"
+        id="features"
+      >
         <div className="max-w-7xl mx-auto text-center">
           <h2 className="text-3xl font-semibold mb-12">Why Choose MediLink?</h2>
           <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
