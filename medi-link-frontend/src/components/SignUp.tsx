@@ -17,6 +17,8 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
+import { signUp } from "@/lib/api";
+import { toast } from "sonner";
 
 export function SignUp() {
   const router = useRouter();
@@ -27,29 +29,40 @@ export function SignUp() {
   const [role, setRole] = useState("patient");
 
   const handleSignup = async () => {
-    console.log("email:", email);
-    console.log("password:", password);
-    console.log("role:", role);
+    if (password !== confirmPassword) {
+      toast.error("Passwords do not match");
+      return;
+    }
 
-    const response = await fetch("http://localhost:5000/v1/auth/signup", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        name,
-        email,
-        password,
-        role,
-      }),
-    });
+    if (!email || !password || !role) {
+      toast.error("All fields are required");
+      return;
+    }
+    if (password.length < 6) {
+      toast.error("Password must be at least 6 characters long");
+      return;
+    }
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+      toast.error("Invalid email format");
+      return;
+    }
+    if (!name) {
+      toast.error("Name is required");
+      return;
+    }
 
+    const response = await signUp(name, email, password, role);
     const data = await response.json();
-    console.log("Signup response:", data);
+
+    const token = data.data.token;
+    const user = data.data.user;
+    localStorage.setItem("token", token);
+    localStorage.setItem("userID", user._id);
+    localStorage.setItem("role", user.role);
 
     if (response.status === 201) {
-      alert("Signup successful: " + data.data.name);
-      router.push("/login");
+      toast.success("Signup successful");
+      router.push("/dashboard");
     }
   };
 
