@@ -9,8 +9,29 @@ import {
   FolderOpen,
   HeartPulse,
 } from "lucide-react";
+import { useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
+import { isUserLoggedIn } from "@/lib/api";
 
 export default function HomePage() {
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const router = useRouter();
+
+  useEffect(() => {
+    const checkLoginStatus = async () => {
+      if (typeof window !== "undefined") {
+        const loggedIn = await isUserLoggedIn();
+        console.log("User logged in status:", loggedIn);
+
+        if (!loggedIn) {
+          setIsLoggedIn(false);
+        } else {
+          setIsLoggedIn(true);
+        }
+      }
+    };
+    checkLoginStatus();
+  }, [router]);
   return (
     <main className="min-h-screen w-full bg-background text-foreground">
       {/* Hero */}
@@ -25,20 +46,26 @@ export default function HomePage() {
               records — all in one platform, built for doctors and patients.
             </p>
             <div className="flex flex-col sm:flex-row gap-4">
-              <Link href="/signup">
-                <Button size="lg" className="w-full sm:w-auto">
-                  Get Started
-                </Button>
-              </Link>
-              <Link href="#features">
-                <Button
-                  className="w-full sm:w-auto border-gray-300 dark:border-zinc-700"
-                  variant="outline"
-                  size="lg"
-                >
-                  Explore Features
-                </Button>
-              </Link>
+              {isLoggedIn ? (
+                <></>
+              ) : (
+                <>
+                  <Link href="/signup">
+                    <Button size="lg" className="w-full sm:w-auto">
+                      Get Started
+                    </Button>
+                  </Link>
+                  <Link href="#features">
+                    <Button
+                      className="w-full sm:w-auto border-gray-300 dark:border-zinc-700"
+                      variant="outline"
+                      size="lg"
+                    >
+                      Explore Features
+                    </Button>
+                  </Link>
+                </>
+              )}
             </div>
           </div>
           <div className="relative w-full h-[400px] rounded-xl overflow-hidden">
