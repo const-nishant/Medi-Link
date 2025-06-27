@@ -57,12 +57,23 @@ export function SignUp() {
     const token = data.data.token;
     const user = data.data.user;
     localStorage.setItem("token", token);
-    localStorage.setItem("userID", user._id);
+    localStorage.setItem("userId", user._id);
     localStorage.setItem("role", user.role);
+
+    await fetch(
+      `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/v1/auth/email-verification/request`,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
 
     if (response.status === 201) {
       toast.success("Signup successful");
-      router.push("/dashboard");
+      router.push("/signup/verify");
     }
   };
 

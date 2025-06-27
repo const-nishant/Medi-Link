@@ -15,40 +15,49 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
+import { login } from "@/lib/api";
+import { toast } from "sonner";
 
 export function LoginForm() {
   const router = useRouter();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [role, setRole] = useState("user");
-  const [accessToken, setAccessToken] = useState("");
 
   const handleLogin = async () => {
     console.log("email:", email);
     console.log("password:", password);
-    console.log("role:", role);
 
-    const response = await fetch("http://localhost:5000/v1/auth/login", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        email,
-        password,
-        role,
-        accessToken,
-      }),
-    });
+    if (!email || !password) {
+      toast.error("Please enter both email and password");
+      return;
+    }
+
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+      toast.error("Invalid email format");
+      return;
+    }
+    if (password.length < 6) {
+      toast.error("Password must be at least 6 characters long");
+      return;
+    }
+
+    const response = await login(email, password);
 
     const data = await response.json();
-    console.log(response);
 
-    console.log("login response:", data);
+    if (data.data.user.isEmailVerified === true) {
+      localStorage.setItem("isEmailVerified", "true");
+    }
+
+    const token = data.data.token;
+    const user = data.data.user;
+    localStorage.setItem("token", token);
+    localStorage.setItem("userId", user._id);
+    localStorage.setItem("role", user.role);
 
     if (response.status === 200) {
-      alert("Login successful: " + data.data.name);
-      router.push(role === "doctor" ? "/doctor/dasboard" : "/patient/dasboard");
+      toast.success("Login successful: " + data.data.name);
+      router.push("/dashboard");
     }
   };
 
